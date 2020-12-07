@@ -35,6 +35,12 @@ public class boardScript : MonoBehaviour
 
     }
 
+    /*
+    Updates the number of wheels currently on the ground
+    Called when a wheel leaves the ground (value = -1)
+    or when a wheel hits the ground (value = 1)
+    by the ground's groundScript
+    */
     public void UpdateWheelCount(int value){
         wheelsOnGround += value;
         Debug.Log("board " + GetInstanceID() + " has " + wheelsOnGround + " wheel(s) on ground");

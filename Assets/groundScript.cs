@@ -36,6 +36,8 @@ public class groundScript : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Collider col = collision.collider;
+
+        // collided with wheel
         if(col.tag == "wheel"){
 
             // get board instance ID
@@ -57,6 +59,8 @@ public class groundScript : MonoBehaviour
     void OnCollisionExit(Collision collision)
     {
         Collider col = collision.collider;
+
+        // wheel left ground
         if(col.tag == "wheel"){
 
             // get board instance ID
@@ -64,7 +68,11 @@ public class groundScript : MonoBehaviour
 
             // if no reference to this board exists in map, create it 
             if(!boardMap.ContainsKey(boardID)){
+
+                // get board's boardscript reference
                 boardScript bs = col.gameObject.GetComponentInParent(typeof(boardScript)) as boardScript;
+                
+                // add board and script to map
                 boardMap.Add(boardID, bs);
                 Debug.Log("new board in map");
             }
