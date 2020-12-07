@@ -38,6 +38,9 @@
   <ItemGroup>
      <Compile Include="Assets\boardScript.cs" />
      <Compile Include="Assets\groundScript.cs" />
+     <Compile Include="Assets\GA-runner\FitnessFunction.cs" />
+     <Compile Include="Assets\GA-runner\Specimen.cs" />
+     <Compile Include="Assets\Specimens\ollieSpecimen.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2020.1.16f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
