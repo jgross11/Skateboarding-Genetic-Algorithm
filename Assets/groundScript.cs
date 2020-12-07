@@ -8,7 +8,7 @@ public class groundScript : MonoBehaviour
     // map storing all created boards' ID as key and script as value
     private Dictionary<int, boardScript> boardMap;
 
-    // board GameObject to populate field
+    // board GameObject whose parameters will be set by the specimen in this experiment
     public GameObject board;
 
     // number of generations to run experiment
@@ -19,6 +19,15 @@ public class groundScript : MonoBehaviour
 
     // mutation percentage
     public float mutationPercentage;
+
+    // type of specimen to run in this experiment
+    private Specimen specimenType;
+
+    // fittest specimen
+    private Specimen fittestSpecimen;
+
+    // population array
+    private Specimen[] population;
 
     // Start is called before the first frame update
     void Start()
@@ -86,5 +95,42 @@ public class groundScript : MonoBehaviour
     // initializes the experiment
     void RunExperiment(){
         
+        // create initial population
+        population = new Specimen[numberOfSpecimens];
+        foreach (var spec in population)
+        {
+            // spec = new 
+        }
+    }
+
+    // calculate the fitness of each specimen
+    void calculateFitnesses(){
+        foreach (Specimen spec in population)
+            spec.calculateFitness();
+    }
+
+    // determine the fittest specimen in the current population
+    Specimen calculateFittestSpecimenInPopulation(){
+        if(population.Length < 1){
+            throw new System.ArgumentException("Invalid population size");
+        }
+        Specimen fittest = population[0];
+        double fittestFitness = fittest.getFitness();
+        for(int i = 1; i < population.Length; i++){
+            Specimen current = population[i];
+            double currentFitness = current.getFitness();
+            if(currentFitness > fittestFitness){
+                fittest = current;
+                fittestFitness = currentFitness;
+            }
+        }
+        return fittest;
+    }
+
+    void nextGeneration(){
+        Specimen[] next = new Specimen[numberOfSpecimens];
+        foreach(Specimen spec in next){
+
+        }
     }
 }
