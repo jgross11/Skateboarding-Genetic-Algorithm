@@ -24,6 +24,7 @@ public class boardScript : MonoBehaviour
     private float firstLastWheelDelta = 0.0f;
     private bool isAWheelOnGround = false;
     public Specimen specimen;
+    public int numFeetOnBoard;
     
 
     // Start is called before the first frame update
@@ -51,35 +52,36 @@ public class boardScript : MonoBehaviour
         // all wheels just hit ground
         if(!boardOnGround && wheelsOnGround == NUM_WHEELS){
             boardOnGround = true; 
-            Debug.Log("board " + GetInstanceID() + " in air for " + airtime + " seconds");
-            Debug.Log("time between first and last wheel hitting ground was " + firstLastWheelDelta + " seconds");
+            // Debug.Log("board " + GetInstanceID() + " in air for " + airtime + " seconds");
+            // Debug.Log("time between first and last wheel hitting ground was " + firstLastWheelDelta + " seconds");
             
             /*
             foreach(Vector3 info in rotationsInAir){
                 Debug.Log(info);
             }
+            */
+            
+            /*
             foreach(Vector3 info in positionsInAir)
             {
                 Debug.Log(info);
             }
             */
             boardData = GenerateBoardData();
-            Debug.Log(boardData.ToString());
-            Debug.Log("fitness: " + specimen.CalculateFitness(boardData));
-            Debug.Log(boardData.minXAngle);
-            Debug.Log(boardData.minYAngle);
-            Debug.Log(boardData.minZAngle);
+            // Debug.Log(boardData.ToString());
+            Debug.Log("new fitness: " + specimen.CalculateFitness(boardData));
             airtime = 0;
             rotationsInAir = new List<Vector3>();
             positionsInAir = new List<Vector3>();
 
         }
+        // at least one wheel is on ground
         else if(isAWheelOnGround){
             firstLastWheelDelta += Time.deltaTime;
         }
         // all wheels just left ground
         else if(boardOnGround && wheelsOnGround == 0){
-            Debug.Log("board " + GetInstanceID() + " in air");
+            // Debug.Log("board " + GetInstanceID() + " in air");
             boardOnGround = false;
             firstLastWheelDelta = 0;
         // all wheels have been off ground for some time
@@ -101,7 +103,7 @@ public class boardScript : MonoBehaviour
         isAWheelOnGround = wheelsOnGround > 0;
     }
 
-    void reset()
+    public void reset()
     {
         // disable physics to wipe velocity, torque, etc.
         rgbd.isKinematic = true;
@@ -130,18 +132,18 @@ public class boardScript : MonoBehaviour
         float currentMaxZ = 0;
         foreach(Vector3 rotData in rotationsInAir)
         {
-            float currentX = (float)Math.Sqrt(Math.Abs(rotData.x));
-            float currentY = (float)Math.Sqrt(Math.Abs(rotData.y));
-            float currentZ = (float)Math.Sqrt(Math.Abs(rotData.z));
+            float currentX = rotData.x >= 0 ? rotData.x : rotData.x + 360;
+            float currentY = rotData.y >= 0 ? rotData.y : rotData.y + 360;
+            float currentZ = rotData.z >= 0 ? rotData.z : rotData.z + 360;
 
             if(currentX - initialRotation.eulerAngles.x > currentMaxX){
-                currentMaxX = (float) Math.Abs(currentX - initialRotation.eulerAngles.x);
+                currentMaxX = currentX - initialRotation.eulerAngles.x;
             }
             if(currentY - initialRotation.eulerAngles.y > currentMaxY){
-                currentMaxY = (float) Math.Abs(currentY - initialRotation.eulerAngles.y);
+                currentMaxY = currentY - initialRotation.eulerAngles.y;
             }
             if(currentZ - initialRotation.eulerAngles.z > currentMaxZ){
-                currentMaxZ = (float) Math.Abs(currentZ - initialRotation.eulerAngles.z);
+                currentMaxZ = currentZ - initialRotation.eulerAngles.z;
             }
         }
         data.minXAngle = currentMaxX;
@@ -161,6 +163,20 @@ public class boardScript : MonoBehaviour
 
         // assign first/last wheel time
         data.firstLastWheelDelta = firstLastWheelDelta;
+
+        data.bothFeetOnBoard = numFeetOnBoard == 2;
         return data;
+    }
+
+    void OnCollisionEnter(Collision collision){
+        if(collision.collider.tag == "foot"){
+            numFeetOnBoard++;
+        }
+    }
+
+    void OnCollisionExit(Collision collision){
+        if(collision.collider.tag == "foot"){
+            numFeetOnBoard--;
+        }
     }
 }
