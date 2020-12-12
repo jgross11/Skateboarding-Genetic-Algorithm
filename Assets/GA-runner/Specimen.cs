@@ -22,8 +22,14 @@ public class Specimen : MonoBehaviour
     // reference to back foot's rigidbody
     public Rigidbody backFootRGBD;
 
+    // initial back foot position
+    public Vector3 backFootInitialPos;
+
     // reference to front foot's rigidbody
     public Rigidbody frontFootRGBD;
+
+    // initial front foot position
+    public Vector3 frontFootInitialPos;
 
     // the identifier for this specimen in its generation
     private int specimenID;
@@ -62,10 +68,12 @@ public class Specimen : MonoBehaviour
             // back foot rigidbody used to execute movements on back foot
             } else if(childName == "back_foot"){
                 backFootRGBD = child.GetComponent<Rigidbody>();
+                backFootInitialPos = child.transform.position;
 
             // front foot rigidbody used to execute movements on front foot
             } else if(childName == "front_foot"){
                 frontFootRGBD = child.GetComponent<Rigidbody>();
+                frontFootInitialPos = child.transform.position;
 
             // fitness function designates how to interpret information
             } else if(childName == "fitnessFunctionObject"){
@@ -78,6 +86,7 @@ public class Specimen : MonoBehaviour
 
 
         // test ollie action pairs
+        /*
         actionsPairing = new Tuple<float, Vector3, bool>[]{
             Tuple.Create(0.9f, new Vector3(0.0f, 1.0f, 0.0f), RIGHT),
             Tuple.Create(1f, new Vector3(0.0f, -2.0f, 0), LEFT),
@@ -86,17 +95,15 @@ public class Specimen : MonoBehaviour
             Tuple.Create(1.4f, new Vector3(0.0f, -2.0f, 0), LEFT),
             Tuple.Create(1.4f, new Vector3(0.0f, -2.0f, -1.0f), RIGHT)
         };
-
-        nextActionTime = actionsPairing[0].Item1;
-        nextActionVector = actionsPairing[0].Item2;
+        */
     }
 
     void Update(){
         simulationTime += Time.deltaTime;
 
         // if it is time to do the next action
-        if(nextActionTime < simulationTime && nextActionIndex < actionsPairing.Length){
-            Debug.Log("executing movement #" + nextActionIndex);
+        if(nextActionTime < simulationTime && actionsPairing != null && nextActionIndex < actionsPairing.Length){
+            // Debug.Log("executing movement #" + nextActionIndex);
             // apply the next action's movement
             // to the appropriate foot
             // true = apply movement to back foot
@@ -124,5 +131,18 @@ public class Specimen : MonoBehaviour
     // returns the fitness of this specimen
     public double GetFitness(){
         return fitnessValue;
+    }
+
+    // sets this action tuple to the given
+    public void setActionTuple(Tuple<float, Vector3, bool>[] actions){
+        actionsPairing = actions;
+        nextActionTime = actionsPairing[0].Item1;
+        nextActionVector = actionsPairing[0].Item2;
+    }
+
+    public void reset(){
+        boardScript.reset();
+        backFootRGBD.transform.position = backFootInitialPos;
+        frontFootRGBD.transform.position = frontFootInitialPos;
     }
 }
