@@ -21,6 +21,9 @@ public class BoardData
     // minimum angle of rotation experienced on Z axis
     public float minZAngle;
 
+    // both feet on board
+    public bool bothFeetOnBoard;
+
     // TODO max distance between two feet and board
 
     public override string ToString(){
@@ -30,6 +33,7 @@ public class BoardData
         result += "\nmax X angle: " + minXAngle;
         result += "\nmax Y angle: " + minYAngle;
         result += "\nmax Z angle: " + minZAngle;
+        result += "\nboth feet on board: " + bothFeetOnBoard;
         return result;
     }
 }
