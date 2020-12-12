@@ -11,29 +11,14 @@ public class groundScript : MonoBehaviour
     // board GameObject whose parameters will be set by the specimen in this experiment
     public GameObject board;
 
-    // number of generations to run experiment
-    public int numberOfGenerations;
-
-    // number of specimen per generation
-    public int numberOfSpecimens;
-
-    // mutation percentage
-    public float mutationPercentage;
-
-    // type of specimen to run in this experiment
-    public Specimen specimenType;
-
-    // fittest specimen
-    private Specimen fittestSpecimen;
-
-    // population array
-    private Specimen[] population;
+    // genetic algorithm controller
+    public GARunner runner;
 
     // Start is called before the first frame update
     void Start()
     {
         boardMap = new Dictionary<int, boardScript>();
-        RunExperiment();
+        runner.RunExperiment();
     }
 
     // Update is called once per frame
@@ -56,7 +41,7 @@ public class groundScript : MonoBehaviour
             if(!boardMap.ContainsKey(boardID)){
                 boardScript bs = col.gameObject.GetComponentInParent(typeof(boardScript)) as boardScript;
                 boardMap.Add(boardID, bs);
-                Debug.Log("new board in map");
+                // Debug.Log("new board in map");
             }
 
             // increment number of wheels on ground for this board
@@ -83,56 +68,11 @@ public class groundScript : MonoBehaviour
                 
                 // add board and script to map
                 boardMap.Add(boardID, bs);
-                Debug.Log("new board in map");
+                // Debug.Log("new board in map");
             }
 
             // decrement number of wheels on ground for this board
             boardMap[boardID].UpdateWheelCount(-1);
-        }
-    }
-
-
-    // initializes the experiment
-    void RunExperiment(){
-        
-        // create initial population
-        population = new Specimen[numberOfSpecimens];
-        foreach (var spec in population){
-            
-        }
-        
-    }
-
-    // calculate the fitness of each specimen
-    void calculateFitnesses(){
-        foreach (Specimen spec in population){
-            // TODO fix this
-            // spec.CalculateFitness();
-        }
-    }
-
-    // determine the fittest specimen in the current population
-    Specimen calculateFittestSpecimenInPopulation(){
-        if(population.Length < 1){
-            throw new System.ArgumentException("Invalid population size");
-        }
-        Specimen fittest = population[0];
-        double fittestFitness = fittest.GetFitness();
-        for(int i = 1; i < population.Length; i++){
-            Specimen current = population[i];
-            double currentFitness = current.GetFitness();
-            if(currentFitness > fittestFitness){
-                fittest = current;
-                fittestFitness = currentFitness;
-            }
-        }
-        return fittest;
-    }
-
-    void nextGeneration(){
-        Specimen[] next = new Specimen[numberOfSpecimens];
-        foreach(Specimen spec in next){
-
         }
     }
 }
