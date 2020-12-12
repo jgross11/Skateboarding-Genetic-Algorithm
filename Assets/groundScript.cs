@@ -21,7 +21,7 @@ public class groundScript : MonoBehaviour
     public float mutationPercentage;
 
     // type of specimen to run in this experiment
-    private Specimen specimenType;
+    public Specimen specimenType;
 
     // fittest specimen
     private Specimen fittestSpecimen;
@@ -97,16 +97,18 @@ public class groundScript : MonoBehaviour
         
         // create initial population
         population = new Specimen[numberOfSpecimens];
-        foreach (var spec in population)
-        {
-            // spec = new 
+        foreach (var spec in population){
+            
         }
+        
     }
 
     // calculate the fitness of each specimen
     void calculateFitnesses(){
-        foreach (Specimen spec in population)
-            spec.calculateFitness();
+        foreach (Specimen spec in population){
+            // TODO fix this
+            // spec.CalculateFitness();
+        }
     }
 
     // determine the fittest specimen in the current population
@@ -115,10 +117,10 @@ public class groundScript : MonoBehaviour
             throw new System.ArgumentException("Invalid population size");
         }
         Specimen fittest = population[0];
-        double fittestFitness = fittest.getFitness();
+        double fittestFitness = fittest.GetFitness();
         for(int i = 1; i < population.Length; i++){
             Specimen current = population[i];
-            double currentFitness = current.getFitness();
+            double currentFitness = current.GetFitness();
             if(currentFitness > fittestFitness){
                 fittest = current;
                 fittestFitness = currentFitness;
