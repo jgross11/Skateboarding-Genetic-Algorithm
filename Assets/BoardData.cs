@@ -21,8 +21,8 @@ public class BoardData
     // minimum angle of rotation experienced on Z axis
     public float minZAngle;
 
-    // both feet on board
-    public bool bothFeetOnBoard;
+    // number of feet in contact with board after trick ends
+    public int feetOnBoard;
 
     // TODO max distance between two feet and board
 
@@ -33,7 +33,7 @@ public class BoardData
         result += "\nmax X angle: " + minXAngle;
         result += "\nmax Y angle: " + minYAngle;
         result += "\nmax Z angle: " + minZAngle;
-        result += "\nboth feet on board: " + bothFeetOnBoard;
+        result += "\nboth feet on board: " + feetOnBoard;
         return result;
     }
 }
