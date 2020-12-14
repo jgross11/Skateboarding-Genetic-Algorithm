@@ -14,7 +14,7 @@ public class Specimen : MonoBehaviour
     public FitnessFunction fitnessFunction;
 
     // the fitness value of this board
-    private double fitnessValue;
+    public float fitnessValue;
 
     // reference to boardScript for obtaining information
     public boardScript boardScript;
@@ -123,7 +123,7 @@ public class Specimen : MonoBehaviour
     }
 
     // calculates this specimen's fitness
-    public double CalculateFitness(BoardData data){
+    public float CalculateFitness(BoardData data){
         fitnessValue = fitnessFunction.GetFitness(data);
         return fitnessValue;
     }
@@ -140,9 +140,20 @@ public class Specimen : MonoBehaviour
         nextActionVector = actionsPairing[0].Item2;
     }
 
-    public void reset(){
+    public void Reset(){
         boardScript.reset();
+        backFootRGBD.isKinematic = true;
         backFootRGBD.transform.position = backFootInitialPos;
+        backFootRGBD.isKinematic = false;
+        frontFootRGBD.isKinematic = true;
         frontFootRGBD.transform.position = frontFootInitialPos;
+        frontFootRGBD.isKinematic = false;
+        simulationTime = -1;
+        nextActionIndex = 0;
+        fitnessValue = 0;
+    }
+
+    public Tuple<float, Vector3, bool>[] GetActionTuple(){
+        return actionsPairing;
     }
 }
