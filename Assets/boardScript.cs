@@ -41,13 +41,14 @@ public class boardScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if(runCounter < runTime){
             runCounter += Time.deltaTime;
         }
         else{
             reset();
             runCounter = 0;
-        }
+        }*/
 
         // all wheels just hit ground
         if(!boardOnGround && wheelsOnGround == NUM_WHEELS){
@@ -69,7 +70,7 @@ public class boardScript : MonoBehaviour
             */
             boardData = GenerateBoardData();
             // Debug.Log(boardData.ToString());
-            Debug.Log("new fitness: " + specimen.CalculateFitness(boardData));
+            specimen.CalculateFitness(boardData);
             airtime = 0;
             rotationsInAir = new List<Vector3>();
             positionsInAir = new List<Vector3>();
@@ -116,6 +117,9 @@ public class boardScript : MonoBehaviour
 
         // enable physics for next run
         rgbd.isKinematic = false;
+
+        rotationsInAir = new List<Vector3>();
+        positionsInAir = new List<Vector3>();
     }
 
     private float calculateFitness(){
@@ -164,7 +168,7 @@ public class boardScript : MonoBehaviour
         // assign first/last wheel time
         data.firstLastWheelDelta = firstLastWheelDelta;
 
-        data.bothFeetOnBoard = numFeetOnBoard == 2;
+        data.feetOnBoard = numFeetOnBoard;
         return data;
     }
 
