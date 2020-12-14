@@ -8,9 +8,6 @@ public class groundScript : MonoBehaviour
     // map storing all created boards' ID as key and script as value
     private Dictionary<int, boardScript> boardMap;
 
-    // board GameObject whose parameters will be set by the specimen in this experiment
-    public GameObject board;
-
     // genetic algorithm controller
     public GARunner runner;
 
