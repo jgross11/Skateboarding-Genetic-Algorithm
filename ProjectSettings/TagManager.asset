@@ -6,6 +6,7 @@ TagManager:
   tags:
   - board
   - wheel
+  - foot
   layers:
   - Default
   - TransparentFX
