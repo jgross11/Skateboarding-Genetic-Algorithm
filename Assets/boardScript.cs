@@ -23,6 +23,8 @@ public class boardScript : MonoBehaviour
     private BoardData boardData;
     private float firstLastWheelDelta = 0.0f;
     private bool isAWheelOnGround = false;
+    private Transform leftFoot, rightFoot;
+    private List<Vector3> leftFootPositions, rightFootPositions;
     public Specimen specimen;
     public int numFeetOnBoard;
     
@@ -36,11 +38,15 @@ public class boardScript : MonoBehaviour
         rgbd = GetComponent<Rigidbody>();
         rotationsInAir = new List<Vector3>();
         positionsInAir = new List<Vector3>();
+        leftFootPositions = new List<Vector3>();
+        rightFootPositions = new List<Vector3>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        leftFootPositions.Add(leftFoot.position);
+        rightFootPositions.Add(rightFoot.position);
         /*
         if(runCounter < runTime){
             runCounter += Time.deltaTime;
@@ -68,9 +74,6 @@ public class boardScript : MonoBehaviour
                 Debug.Log(info);
             }
             */
-            boardData = GenerateBoardData();
-            // Debug.Log(boardData.ToString());
-            specimen.CalculateFitness(boardData);
             airtime = 0;
             rotationsInAir = new List<Vector3>();
             positionsInAir = new List<Vector3>();
@@ -104,8 +107,16 @@ public class boardScript : MonoBehaviour
         isAWheelOnGround = wheelsOnGround > 0;
     }
 
+    public void SetFoot(bool isLeftFoot, Transform transform){
+        if(isLeftFoot) leftFoot = transform; else rightFoot = transform;
+    }
+
     public void reset()
     {
+        boardData = GenerateBoardData();
+        // Debug.Log(boardData.ToString());
+        specimen.CalculateFitness(boardData);
+
         // disable physics to wipe velocity, torque, etc.
         rgbd.isKinematic = true;
 
@@ -120,6 +131,9 @@ public class boardScript : MonoBehaviour
 
         rotationsInAir = new List<Vector3>();
         positionsInAir = new List<Vector3>();
+        leftFootPositions = new List<Vector3>();
+        rightFootPositions = new List<Vector3>();
+
     }
 
     private float calculateFitness(){
@@ -168,18 +182,37 @@ public class boardScript : MonoBehaviour
         // assign first/last wheel time
         data.firstLastWheelDelta = firstLastWheelDelta;
 
+        // assign num feet on board after trick end
         data.feetOnBoard = numFeetOnBoard;
+
+        // assign left / right foot variance from beginning to end of trick
+        Vector3 leftStart, leftEnd, rightStart, rightEnd;
+        leftStart = leftFootPositions[0];
+        leftEnd = leftFootPositions[leftFootPositions.Count-1];
+        rightStart = rightFootPositions[0];
+        rightEnd = rightFootPositions[rightFootPositions.Count-1];
+        data.leftFootVariance = (float) Math.Sqrt(
+            (leftEnd.x - leftStart.x)*(leftEnd.x - leftStart.x)+
+            (leftEnd.y - leftStart.y)*(leftEnd.y - leftStart.y)+
+            (leftEnd.z - leftStart.z)*(leftEnd.z - leftStart.z)
+        );
+        data.rightFootVariance = (float) Math.Sqrt(
+            (rightEnd.x - rightStart.x)*(rightEnd.x - rightStart.x)+
+            (rightEnd.y - rightStart.y)*(rightEnd.y - rightStart.y)+
+            (rightEnd.z - rightStart.z)*(rightEnd.z - rightStart.z)
+        );
+
         return data;
     }
 
     void OnCollisionEnter(Collision collision){
-        if(collision.collider.tag == "foot"){
+        if(collision.collider.tag == "foot" && collision.collider.transform.position.y > transform.position.y){
             numFeetOnBoard++;
         }
     }
 
     void OnCollisionExit(Collision collision){
-        if(collision.collider.tag == "foot"){
+        if(collision.collider.tag == "foot" && collision.collider.transform.position.y > transform.position.y){
             numFeetOnBoard--;
         }
     }

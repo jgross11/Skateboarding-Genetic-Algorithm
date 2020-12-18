@@ -24,6 +24,12 @@ public class BoardData
     // number of feet in contact with board after trick ends
     public int feetOnBoard;
 
+    // left foot variance over duration of trick
+    public float leftFootVariance;
+
+    // right foot variance over duration of trick
+    public float rightFootVariance;
+
     // TODO max distance between two feet and board
 
     public override string ToString(){
@@ -33,7 +39,9 @@ public class BoardData
         result += "\nmax X angle: " + minXAngle;
         result += "\nmax Y angle: " + minYAngle;
         result += "\nmax Z angle: " + minZAngle;
-        result += "\nboth feet on board: " + feetOnBoard;
+        result += "\nfeet on board: " + feetOnBoard;
+        result += "\nleft foot variance: " + leftFootVariance;
+        result += "\nright foot variance: " + rightFootVariance;
         return result;
     }
 }
