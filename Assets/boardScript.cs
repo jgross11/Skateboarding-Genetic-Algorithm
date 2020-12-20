@@ -27,6 +27,7 @@ public class boardScript : MonoBehaviour
     private List<Vector3> leftFootPositions, rightFootPositions;
     public Specimen specimen;
     public int numFeetOnBoard;
+    public const float FOOT_BOARD_HEIGHT_CONSTANT = 0.3672593f;
     
 
     // Start is called before the first frame update
@@ -177,7 +178,20 @@ public class boardScript : MonoBehaviour
                 highestHeight = currentHeight;
             }
         }
+
         data.height = highestHeight;
+
+        // calculate board position variance
+        if(positionsInAir.Count > 0){
+            Vector3 lastBoardPos = positionsInAir[positionsInAir.Count-1];
+            Vector3 firstBoardPos = positionsInAir[0];
+            data.boardPositionVariance = (float) Math.Sqrt(
+                (lastBoardPos.x - firstBoardPos.x) * (lastBoardPos.x - firstBoardPos.x) +
+                (lastBoardPos.z - firstBoardPos.z) * (lastBoardPos.z - firstBoardPos.z)
+            );
+        } else{
+            data.boardPositionVariance = 1.0f;
+        }
 
         // assign first/last wheel time
         data.firstLastWheelDelta = firstLastWheelDelta;
@@ -206,13 +220,13 @@ public class boardScript : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision){
-        if(collision.collider.tag == "foot" && collision.collider.transform.position.y > transform.position.y){
+        if(collision.collider.tag == "foot" && collision.collider.transform.position.y > transform.position.y + FOOT_BOARD_HEIGHT_CONSTANT){
             numFeetOnBoard++;
         }
     }
 
     void OnCollisionExit(Collision collision){
-        if(collision.collider.tag == "foot" && collision.collider.transform.position.y > transform.position.y){
+        if(collision.collider.tag == "foot" && numFeetOnBoard > 0){
             numFeetOnBoard--;
         }
     }
