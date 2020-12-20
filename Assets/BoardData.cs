@@ -30,7 +30,11 @@ public class BoardData
     // right foot variance over duration of trick
     public float rightFootVariance;
 
+    // difference between board end pos and board start pos
+    public float boardPositionVariance;
+
     // TODO max distance between two feet and board
+
 
     public override string ToString(){
         string result = "";
