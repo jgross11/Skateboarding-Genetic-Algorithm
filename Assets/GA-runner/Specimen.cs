@@ -32,11 +32,11 @@ public class Specimen : MonoBehaviour
     public Vector3 frontFootInitialPos;
 
     // the identifier for this specimen in its generation
-    private int specimenID;
+    public int specimenID;
 
     // array of foot-movement vectors, timestamps,
     // and the foot to execute movement on
-    private Tuple<float, Vector3, bool>[] actionsPairing;
+    private Action[] actions;
 
     // time variable that determines when a foot movement occurs
     // start at -1 to give time for board to settle on ground before
@@ -69,11 +69,13 @@ public class Specimen : MonoBehaviour
             } else if(childName == "back_foot"){
                 backFootRGBD = child.GetComponent<Rigidbody>();
                 backFootInitialPos = child.transform.position;
+                boardScript.SetFoot(LEFT, child);
 
             // front foot rigidbody used to execute movements on front foot
             } else if(childName == "front_foot"){
                 frontFootRGBD = child.GetComponent<Rigidbody>();
                 frontFootInitialPos = child.transform.position;
+                boardScript.SetFoot(RIGHT, child);
 
             // fitness function designates how to interpret information
             } else if(childName == "fitnessFunctionObject"){
@@ -102,22 +104,22 @@ public class Specimen : MonoBehaviour
         simulationTime += Time.deltaTime;
 
         // if it is time to do the next action
-        if(nextActionTime < simulationTime && actionsPairing != null && nextActionIndex < actionsPairing.Length){
+        if(nextActionTime < simulationTime && actions != null && nextActionIndex < actions.Length){
             // Debug.Log("executing movement #" + nextActionIndex);
             // apply the next action's movement
             // to the appropriate foot
             // true = apply movement to back foot
             // false = apply movement to front foot
             // I feel the need to do a ternary, although it is not allowed, so this is the compromise
-            if(actionsPairing[nextActionIndex].Item3) backFootRGBD.AddForce(nextActionVector * thrust); else frontFootRGBD.AddForce(nextActionVector * thrust);
+            if(actions[nextActionIndex].isLeftFoot) backFootRGBD.AddForce(nextActionVector * thrust); else frontFootRGBD.AddForce(nextActionVector * thrust);
 
             // move to would-be next index
             nextActionIndex++;
 
             // set next action time and movement if applicable
-            if(nextActionIndex < actionsPairing.Length){
-                nextActionTime = actionsPairing[nextActionIndex].Item1;
-                nextActionVector = actionsPairing[nextActionIndex].Item2;
+            if(nextActionIndex < actions.Length){
+                nextActionTime = actions[nextActionIndex].executionTime;
+                nextActionVector = actions[nextActionIndex].direction;
             }
         }
     }
@@ -134,10 +136,10 @@ public class Specimen : MonoBehaviour
     }
 
     // sets this action tuple to the given
-    public void setActionTuple(Tuple<float, Vector3, bool>[] actions){
-        actionsPairing = actions;
-        nextActionTime = actionsPairing[0].Item1;
-        nextActionVector = actionsPairing[0].Item2;
+    public void SetActions(Action[] acts){
+        actions = acts;
+        nextActionTime = actions[0].executionTime;
+        nextActionVector = actions[0].direction;
     }
 
     public void Reset(){
@@ -150,10 +152,19 @@ public class Specimen : MonoBehaviour
         frontFootRGBD.isKinematic = false;
         simulationTime = -1;
         nextActionIndex = 0;
-        fitnessValue = 0;
     }
 
-    public Tuple<float, Vector3, bool>[] GetActionTuple(){
-        return actionsPairing;
+    public Action[] GetActions(){
+        return actions;
+    }
+
+    public override string ToString(){
+        string result = specimenID + "\n";
+        result += "Fitness: " + fitnessValue + "\n";
+        foreach(Action a in actions)
+        {
+            result += a.ToString();
+        } 
+        return result;
     }
 }
